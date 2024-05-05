@@ -2,7 +2,7 @@
 
     📁 Dosya Yükleme Uygulaması
 
-Bu uygulama, React Native ve Expo kullanılarak geliştirilmiş bir dosya yükleme uygulamasıdır. Kullanıcılar, uygulama üzerinden PDF dosyalarını seçebilir ve bu dosyaları bir API'ye yükleyebilirler.
+Bu uygulama, React Native ve Expo kullanılarak geliştirilmiş bir dosya yükleme uygulamasıdır. Kullanıcılar, uygulama üzerinden CSV dosyalarını seçebilir ve bu dosyaları bir API'ye yükleyebilirler.
 
 ## Özellikler
 
@@ -13,7 +13,7 @@ Bu uygulama, React Native ve Expo kullanılarak geliştirilmiş bir dosya yükle
 ## Kurulum
 
 1. Projeyi klonlayın: `git clone https://github.com/osmantemel/Mobile-ML-Train-App.git`
-2. Proje dizinine gidin: `cd dosya-yukleme-uygulamasi`
+2. Proje dizinine gidin: `cd Mobile-ML-Train-App`
 3. Gerekli bağımlılıkları yükleyin: `npm install` veya `yarn install`
 4. Uygulamayı başlatın: `npm start` veya `yarn start`
 5. Expo CLI tarafından sağlanan talimatları izleyin ve uygulamayı bir cihazda veya emülatörde çalıştırın.
@@ -31,7 +31,5 @@ Bu uygulama, React Native ve Expo kullanılarak geliştirilmiş bir dosya yükle
 - Hataları rapor etmek veya önerilerde bulunmak için lütfen bir GitHub issues açın.
 - Kod tabanına katkıda bulunmak için bir pull isteği gönderin. 
 
-## Lisans
 
-Bu proje MIT lisansı altında lisanslanmıştır. Daha fazla bilgi için LICENSE dosyasına bakın.
 
