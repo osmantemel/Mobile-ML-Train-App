@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 
 export default function DatasetUploadScreen() {
   const [selectedFileName, setSelectedFileName] = useState();
@@ -20,7 +21,6 @@ export default function DatasetUploadScreen() {
         setselectedFileUri(file.uri);
         setselectedFileType(file.mimeType);
         setselectedFileSize(file.size);
-     
       } else {
         Alert.alert('Dosya Seçme İptal Edildi');
       }
@@ -31,25 +31,34 @@ export default function DatasetUploadScreen() {
   };
 
   const uploadFileToApi = async () => {
+    const fileData = await FileSystem.readAsStringAsync(selectedFileUri, { encoding: FileSystem.EncodingType.Base64 });
+    console.log(fileData.slice(0, 20)); 
+  
     try {
-
-      const data = {
-        name: selectedFileName,
-        uri: selectedFileUri,
-        Type: selectedFileType,
-        size: selectedFileSize,
-      };
-      console.log(selectedFileName);
-      console.log(selectedFileType);
-      console.log(selectedFileUri);
-      console.log(selectedFileSize);
-    }
-    catch (error) {
+      const response = await fetch('http://127.0.0.1:5000/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: selectedFileName,
+          data: fileData,
+          type: selectedFileType,
+          size: selectedFileSize,
+        }),
+      });
+  
+      if (response.ok) {
+        Alert.alert('Dosya Başarıyla Gönderildi');
+      } else {
+        throw new Error('Dosya gönderme başarısız oldu');
+      }
+    } catch (error) {
       console.log('Dosya gönderme hatası:', error);
       Alert.alert('Dosya Gönderme Hatası', `Hata: ${error.message}`);
     }
   };
-
+  
 
   return (
     <View style={styles.container}>
