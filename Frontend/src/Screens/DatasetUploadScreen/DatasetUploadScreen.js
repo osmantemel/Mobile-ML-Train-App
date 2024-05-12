@@ -12,9 +12,8 @@ export default function DatasetUploadScreen() {
 
   const handleUpload = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: 'application/pdf',
-      });
+      const result = await DocumentPicker.getDocumentAsync({ type: 'text/comma-separated-values'});
+
       if (!result.cancelled) {
         const file = result.assets[0];
         setSelectedFileName(file.name);
@@ -31,35 +30,46 @@ export default function DatasetUploadScreen() {
   };
 
   const uploadFileToApi = async () => {
-    const fileData = await FileSystem.readAsStringAsync(selectedFileUri, { encoding: FileSystem.EncodingType.Base64 });
-    console.log(fileData.slice(0, 20)); 
+    if (!selectedFileName || !selectedFileUri || !selectedFileType || !selectedFileSize) {
+      Alert.alert('Dosya Seçilmedi', 'Lütfen önce bir dosya seçin.');
+      return;
+    }
   
     try {
-      const response = await fetch('http://127.0.0.1:5000/upload', {
+      const fileData = await FileSystem.readAsStringAsync(selectedFileUri, { encoding: FileSystem.EncodingType.Base64 });
+      console.log(fileData.slice(0, 20)); 
+      
+      var data = {
+        id : fileData.slice(0, 20),
+        user_id : 0,
+        name: selectedFileName,
+        data: fileData,
+        type: selectedFileType,
+        size: selectedFileSize,
+      }
+  
+      fetch('http://10.0.2.2:5000/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: selectedFileName,
-          data: fileData,
-          type: selectedFileType,
-          size: selectedFileSize,
-        }),
+        mode: 'cors',
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);    
       });
-  
-      if (response.ok) {
-        Alert.alert('Dosya Başarıyla Gönderildi');
-      } else {
-        throw new Error('Dosya gönderme başarısız oldu');
-      }
     } catch (error) {
-      console.log('Dosya gönderme hatası:', error);
-      Alert.alert('Dosya Gönderme Hatası', `Hata: ${error.message}`);
+      console.log('Dosya Okuma Hatası:', error);
+      Alert.alert('Dosya Okuma Hatası', `Hata: ${error.message}`);
     }
   };
   
-
+  
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.iconButton} onPress={handleUpload}>
