@@ -72,6 +72,15 @@ export default function DatasetUploadScreen() {
       console.log('Dosya Okuma Hatası:', error);
       Alert.alert('Dosya Okuma Hatası', `Hata: ${error.message}`);
     }
+
+    // Form verilerini temizle
+    Alert.alert("Dosya Başarı ile alındı", "Model eğitiliyor...(5 dk)");
+    setSelectedFileName(null);
+    setSelectedFileUri(null);
+    setSelectedFileType(null);
+    setSelectedFileSize(null);
+    setLabelName('');
+    setProblemType('');
   };
 
   return (

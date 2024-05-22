@@ -19,11 +19,15 @@ def upload():
         file_labelColumnName = file_data.get('labelColumnName')
 
         db.add_data(model_id,user_id, file_name, data, file_type, file_size , file_labelColumnName,file_problemType)
-        ai.verileri_oku()
+        ai.verileri_oku(model_id,file_name,file_labelColumnName,file_problemType)
         return jsonify({'mesaj ': 'Dosya alındı ve işlendi.'}), 200
     except Exception as e:
         print("Hata:", str(e))
         return jsonify({'error': f'Hata: {str(e)}'}), 500
+
+@app.route('/respone', methods=['POST'])
+def respone():
+   pass
 
 if __name__ == '__main__':
     db.create_table()

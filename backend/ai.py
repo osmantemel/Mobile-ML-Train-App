@@ -4,7 +4,7 @@ import base64
 import io
 import train_ai_model as tr_ai
 
-def verileri_oku():
+def verileri_oku(model_id,file_name,file_labelColumnName,file_problemType):
     try:
         conn = sqlite3.connect('dosya_veritabani.db')
         cursor = conn.cursor()
@@ -15,7 +15,7 @@ def verileri_oku():
         if data:
             print("Veri bulundu")
             data_frame = to_dataframe(data)
-            tr_ai.train_ai(data_frame)
+            tr_ai.train_ai(model_id,file_name,data_frame,file_labelColumnName,file_problemType)
         else:
             print("Veri bulunamadı.")
     except Exception as e:
@@ -26,5 +26,4 @@ def to_dataframe(data):
     csv_data = io.StringIO(decoded_data.decode('utf-8'))
     data_frame = pd.read_csv(csv_data)
     return data_frame
-
 
