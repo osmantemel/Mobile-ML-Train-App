@@ -15,8 +15,10 @@ def upload():
         data = file_data.get('data')
         file_type = file_data.get('type')
         file_size = file_data.get('size')
+        file_problemType = file_data.get('problemType')
+        file_labelColumnName = file_data.get('labelColumnName')
 
-        db.add_data(model_id,user_id, file_name, data, file_type, file_size)
+        db.add_data(model_id,user_id, file_name, data, file_type, file_size , file_labelColumnName,file_problemType)
         ai.verileri_oku()
         return jsonify({'mesaj ': 'Dosya alındı ve işlendi.'}), 200
     except Exception as e:

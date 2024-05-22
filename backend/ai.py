@@ -22,8 +22,6 @@ def verileri_oku():
         print("Hata:", str(e))
 
 def to_dataframe(data):
-    # Veriyi CSV formatından DataFrame'e dönüştür
-
     decoded_data = base64.b64decode(data[0])
     csv_data = io.StringIO(decoded_data.decode('utf-8'))
     data_frame = pd.read_csv(csv_data)

@@ -12,19 +12,25 @@ def create_table():
             file_name TEXT,
             data TEXT,
             type TEXT,
-            size INTEGER
+            size INTEGER,
+            labelColumnName TEXT,
+            problemType TEXT
         )
     ''')
     conn.commit()
     conn.close()
 
-def add_data(model_id,user_id, file_name, data, file_type, file_size):
-            # Veritabanına veriyi ekleme
-        conn = sqlite3.connect('dosya_veritabani.db')
-        cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO dosyalar (model_id,user_id, file_name, data, type, size)
-            VALUES (?,?, ?, ?, ?, ?)
-        ''', (model_id,user_id, file_name, data, file_type, file_size))
-        conn.commit()
-        conn.close()
+def add_data(model_id, user_id, file_name, data, file_type, file_size, labelColumnName, problemType):
+    # Veritabanına veriyi ekleme
+    conn = sqlite3.connect('dosya_veritabani.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO dosyalar (model_id, user_id, file_name, data, type, size, labelColumnName, problemType)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (model_id, user_id, file_name, data, file_type, file_size, labelColumnName, problemType))
+    conn.commit()
+    conn.close()
+
+# Tablo oluşturmayı çağırma
+if __name__ == "__main__":
+    create_table()
