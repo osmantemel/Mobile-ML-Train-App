@@ -1,8 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, Animated } from 'react-native';
 
-const HomeContent = ({ navigation }) => {
+const HomeContent = () => {
   const slideInAnim = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
 
   useEffect(() => {
     Animated.timing(slideInAnim, {
@@ -14,17 +16,16 @@ const HomeContent = ({ navigation }) => {
 
   return (
     <ImageBackground
-      // source={require('../../assets/back3.jpg')}
+      source={require('../../assets/icon.png')}
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
         <Animated.Text style={[styles.title, { transform: [{ translateX: slideInAnim.interpolate({ inputRange: [0, 1], outputRange: [300, 0] }) }] }]}>Hoş Geldiniz!</Animated.Text>
         <TouchableOpacity
           style={styles.exploreButton}
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => navigation.navigate('Profil')}
         >
-            <Text onPress={() => navigation.navigate('Profile')} style={styles.exploreButtonText}>Keşfetmeye Başla</Text>
-       
+        <Text style={styles.exploreButtonText}>Keşfetmeye Başla</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>

@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 import joblib
 import sqlite3
 import base64
@@ -24,9 +24,10 @@ def train_ai(model_id, file_name, data_frame, etiket, model_turu='classification
     X_train, X_test, y_train, y_test = verisetini_bol(etiket, data_frame, test_boyutu=0.2, rastgele_durum=42)
     columns = list(X_train.columns)  # columns'ı listeye çevir
     columns_json = json.dumps(columns)  # JSON formatına çevir
-    model = model_egit(X_train, X_test, y_train, y_test, model_turu)
+    model, dogruluk = model_egit(X_train, X_test, y_train, y_test, model_turu)
     file_name = file_name + '.pkl'
-    modeli_kaydet(model_id, columns_json, model, etiket, file_name)
+    model_tablosu_olustur()
+    modeli_kaydet(model_id, columns_json, model, etiket, file_name, dogruluk)
 
 def null_kolonları_sil(df):
     null_columns = df.columns[df.isnull().all()].tolist()
@@ -63,34 +64,36 @@ def verisetini_bol(etiket, veri, test_boyutu=0.2, rastgele_durum=None):
     return X_train, X_test, y_train, y_test
 
 def model_egit(X_train, X_test, y_train, y_test, model_turu='regression'):
+    dogruluk = None
     print("Model türü: " + model_turu)
     if model_turu == 'regression':
         model = DecisionTreeRegressor(random_state=42)
         model.fit(X_train, y_train)
         tahminler = model.predict(X_test)
-        hata_metriği = mean_squared_error(y_test, tahminler)
-        print("Modelin ortalama karesel hatası:", hata_metriği)
+        r2 = r2_score(y_test, tahminler)
+        print("Modelin R^2 skoru:", r2)
+        dogruluk = r2
     elif model_turu == 'classification':
         model = DecisionTreeClassifier(random_state=42)
         model.fit(X_train, y_train)
         tahminler = model.predict(X_test)
         dogruluk_skoru = accuracy_score(y_test, tahminler)
         print("Modelin doğruluk skoru:", dogruluk_skoru)
+        dogruluk = dogruluk_skoru
     else:
         raise ValueError("Geçersiz model türü. 'regresyon' veya 'sınıflandırma' olmalıdır.")
     print("model_egit basarılı")
-    return model
+    return model, dogruluk
 
-def modeli_kaydet(model_id, columns, model, etiket, file_name):              
+def modeli_kaydet(model_id, columns, model, etiket, file_name, dogruluk):              
     model_base64_str = model_base64(model)
-    model_tablosu_olustur()
     # Veritabanına veriyi ekleme
     conn = sqlite3.connect('dosya_veritabani.db')
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO model (model_id, columns, model, etiket, fileName)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (model_id, columns, model_base64_str, etiket, file_name))
+        INSERT INTO model (model_id, columns, model, etiket, fileName, dogruluk)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (model_id, columns, model_base64_str, etiket, file_name, dogruluk))
     conn.commit()
     conn.close()
 
@@ -122,8 +125,12 @@ def model_tablosu_olustur():
             columns TEXT,
             model TEXT,
             etiket TEXT,
-            fileName TEXT
+            fileName TEXT,
+            dogruluk REAL
         )
     ''')
     conn.commit()
     conn.close()
+
+
+

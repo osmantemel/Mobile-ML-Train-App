@@ -6,6 +6,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Profile from './src/Screens/ProfileScreen/Profile';
 import AllModelsPage from './src/Screens/AllModelsScreen/AllModelsPage';
 import DatasetUploadScreen from './src/Screens/DatasetUploadScreen/DatasetUploadScreen';
+import HomeContent from './src/Components/HomeContent';
+import ModelUsage from './src/Screens/ModelKullanma/ModelUsage';
 
 const stack = createNativeStackNavigator();
 
@@ -19,6 +21,8 @@ export default function App() {
           <stack.Screen name="Tüm Modeller" component={AllModelsPage} />
           <stack.Screen name="Veri Seti Yükleme Ekranı" component={DatasetUploadScreen} />
           <stack.Screen name="Profil" component={Profile} />
+          <stack.Screen name="HomeContent" component={HomeContent} />
+          <stack.Screen name="ModelUsage" component={ModelUsage} />
         </stack.Navigator>
       </NavigationContainer>
     </View>
