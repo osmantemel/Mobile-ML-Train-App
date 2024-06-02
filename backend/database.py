@@ -17,6 +17,30 @@ def create_table():
             problemType TEXT
         )
     ''')
+
+    # form_values tablosu oluşturma
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS form_values (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        model_id INTEGER,
+        parametreler TEXT,
+        form_values TEXT,  -- values yerine form_values kullanıldı
+        FOREIGN KEY (model_id) REFERENCES model (id)
+    )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS model (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            model_id TEXT,
+            columns TEXT,
+            model TEXT,
+            etiket TEXT,
+            fileName TEXT,
+            dogruluk REAL
+        )
+    ''')
+
     conn.commit()
     conn.close()
 

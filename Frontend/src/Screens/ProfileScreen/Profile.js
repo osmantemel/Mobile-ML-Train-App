@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { FontAwesome5 } from "@expo/vector-icons";
 import React from 'react';
 
-export default function Profile() {
+export default function Profile({navigation}) {
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <FontAwesome5 name="arrow-left" size={24} color="#fff" />
+            </TouchableOpacity>
       <Image
         style={styles.avatar}
         source={{
@@ -53,4 +57,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    padding: 10,
+    borderRadius: 50,
+    backgroundColor: '#3498db',
+},
 });

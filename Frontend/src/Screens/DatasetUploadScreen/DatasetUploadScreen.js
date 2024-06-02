@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, Platform } from 'react-native';
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { Picker } from '@react-native-picker/picker';
 
-export default function DatasetUploadScreen() {
+export default function DatasetUploadScreen({ navigation }) {
   const [selectedFileName, setSelectedFileName] = useState(null);
   const [selectedFileUri, setSelectedFileUri] = useState(null);
   const [selectedFileType, setSelectedFileType] = useState(null);
@@ -17,8 +17,8 @@ export default function DatasetUploadScreen() {
     try {
       const result = await DocumentPicker.getDocumentAsync({ type: 'text/comma-separated-values' });
 
-      if (!result.cancelled) {
-        const file = result.assets[0];
+      if (result.type !== 'cancel') {
+        const file = result;
         setSelectedFileName(file.name);
         setSelectedFileUri(file.uri);
         setSelectedFileType(file.mimeType);
@@ -40,7 +40,6 @@ export default function DatasetUploadScreen() {
 
     try {
       const fileData = await FileSystem.readAsStringAsync(selectedFileUri, { encoding: FileSystem.EncodingType.Base64 });
-      console.log(fileData.slice(0, 20));
 
       const data = {
         id: fileData.slice(0, 20),
@@ -64,32 +63,36 @@ export default function DatasetUploadScreen() {
         .then(response => response.json())
         .then(data => {
           console.log(data);
+          Alert.alert("Dosya Başarı ile alındı", "Model eğitiliyor...(5 dk)");
         })
         .catch((error) => {
           console.error('Error:', error);
+          Alert.alert('Hata', 'Dosya yüklenirken bir hata oluştu.');
         });
+
+      // Form verilerini temizle
+      setSelectedFileName(null);
+      setSelectedFileUri(null);
+      setSelectedFileType(null);
+      setSelectedFileSize(null);
+      setLabelName('');
+      setProblemType('');
     } catch (error) {
       console.log('Dosya Okuma Hatası:', error);
       Alert.alert('Dosya Okuma Hatası', `Hata: ${error.message}`);
     }
-
-    // Form verilerini temizle
-    Alert.alert("Dosya Başarı ile alındı", "Model eğitiliyor...(5 dk)");
-    setSelectedFileName(null);
-    setSelectedFileUri(null);
-    setSelectedFileType(null);
-    setSelectedFileSize(null);
-    setLabelName('');
-    setProblemType('');
   };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <FontAwesome5 name="arrow-left" size={24} color="#fff" />
+      </TouchableOpacity>
       <TouchableOpacity style={styles.iconButton} onPress={handleUpload}>
-        <FontAwesome5 name="file-upload" size={200} color="white" />
+        <FontAwesome5 name="file-upload" size={100} color="white" />
         <Text style={styles.uploadText}>Dosya seçmek için dokunun</Text>
       </TouchableOpacity>
-      {selectedFileName && <Text>{selectedFileName}</Text>}
+      {selectedFileName && <Text style={styles.fileName}>{selectedFileName}</Text>}
       <TextInput
         style={styles.input}
         placeholder="Etiket Sütununun İsmi"
@@ -118,10 +121,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
+    padding: 20,
+  },
+  backButton: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 40 : 20,
+    left: 20,
+    padding: 10,
+    borderRadius: 50,
+    backgroundColor: '#3498db',
   },
   iconButton: {
     backgroundColor: '#3498db',
-    padding: 15,
+    padding: 30,
     borderRadius: 10,
     marginBottom: 20,
     width: '80%',
@@ -134,6 +146,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '80%',
     alignItems: 'center',
+    marginTop: 20,
   },
   buttonText: {
     color: 'white',
@@ -145,19 +158,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
+    textAlign: 'center',
+  },
+  fileName: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 20,
     paddingHorizontal: 10,
     width: '80%',
+    backgroundColor: '#fff',
+    marginBottom: 20,
   },
   picker: {
     height: 50,
     width: '80%',
+    backgroundColor: '#fff',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
     marginBottom: 20,
   },
 });

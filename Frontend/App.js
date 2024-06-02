@@ -16,13 +16,13 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <NavigationContainer>
-        <stack.Navigator initialRouteName='AllModelsPage'>
+        <stack.Navigator initialRouteName='AllModelsPage' >
           <stack.Screen name="Anasayfa" component={Menu} />
-          <stack.Screen name="Tüm Modeller" component={AllModelsPage} />
-          <stack.Screen name="Veri Seti Yükleme Ekranı" component={DatasetUploadScreen} />
-          <stack.Screen name="Profil" component={Profile} />
+          <stack.Screen name="Tüm Modeller" component={AllModelsPage} options={{headerShown: false}}/>
+          <stack.Screen name="Veri Seti Yükleme Ekranı" component={DatasetUploadScreen} options={{headerShown: false}}/>
+          <stack.Screen name="Profil" component={Profile} options={{headerShown: false}}/>
           <stack.Screen name="HomeContent" component={HomeContent} />
-          <stack.Screen name="ModelUsage" component={ModelUsage} />
+          <stack.Screen name="ModelUsage" component={ModelUsage} options={{headerShown: false}}/>
         </stack.Navigator>
       </NavigationContainer>
     </View>
